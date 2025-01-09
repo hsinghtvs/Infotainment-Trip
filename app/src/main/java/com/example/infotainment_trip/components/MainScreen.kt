@@ -309,7 +309,7 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
             ) {
                 Spacer(
                     modifier = Modifier
-                        .padding(start = 6.dp)
+                        .padding(start = 7.dp, top = 10.dp)
                         .fillMaxHeight()
                         .width(2.dp)
                         .background(color = Color(0xFF1F57E7))
@@ -318,7 +318,8 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                     itemsIndexed(viewModel.tripSummary) { index, trip ->
                         trip?.let {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.trip_dot),
@@ -366,20 +367,25 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                     )
                             ) {
                                 Column {
-                                    Row {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Text(
-                                            modifier = Modifier
+                                            modifier = Modifier.weight(0.7f)
                                                 .padding(vertical = 15.dp, horizontal = 10.dp)
                                                 .background(color = Color(0xFF000106))
                                                 .padding(vertical = 5.dp, horizontal = 10.dp),
                                             text = "Trip ${index + 1}",
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
                                             style = TextStyle(
                                                 fontFamily = FontFamily(Font(R.font.manrope_bold)),
                                                 color = Color(0xFF89F38D)
                                             )
                                         )
-                                        Spacer(modifier = Modifier.weight(1f))
+                                        Spacer(modifier = Modifier.weight(0.2f))
                                         Row(
+                                            modifier = Modifier.weight(1f),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.Center
                                         ) {
@@ -395,6 +401,8 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                                 modifier = Modifier
                                                     .padding(horizontal = 10.dp),
                                                 text = "${trip.avgSpeedMiles} kmpkh",
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
                                                 style = TextStyle(
                                                     fontFamily = FontFamily(Font(R.font.manrope_bold)),
                                                     color = Color.White
@@ -402,8 +410,9 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                             )
 
                                         }
-                                        Spacer(modifier = Modifier.weight(1f))
+                                        Spacer(modifier = Modifier.weight(0.2f))
                                         Row(
+                                            modifier = Modifier.weight(1f),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Image(
@@ -418,6 +427,8 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                                 modifier = Modifier
                                                     .padding(horizontal = 10.dp),
                                                 text = "${trip.totDistance} km",
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
                                                 style = TextStyle(
                                                     fontFamily = FontFamily(Font(R.font.manrope_bold)),
                                                     color = Color.White
@@ -438,6 +449,8 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                         Column(modifier = Modifier.weight(1f)) {
                                             trip.StartDate?.let { it1 ->
                                                 Text(
+                                                    maxLines = 2,
+                                                    overflow = TextOverflow.Ellipsis,
                                                     text = it1,
                                                     style = TextStyle(
                                                         fontFamily = FontFamily(Font(R.font.manrope_bold)),
@@ -467,6 +480,8 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                         Column(modifier = Modifier.weight(1f)) {
                                             trip.EndDate?.let { it1 ->
                                                 Text(
+                                                    maxLines = 2,
+                                                    overflow = TextOverflow.Ellipsis,
                                                     text = it1,
                                                     style = TextStyle(
                                                         fontFamily = FontFamily(Font(R.font.manrope_bold)),

@@ -1,6 +1,7 @@
 package com.example.infotainment_trip
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import com.example.infotainment_trip.components.MainScreen
 import com.example.infotainment_trip.ui.theme.InfotainmentTripTheme
 import com.example.infotainment_trip.viewModel.MainViewModel
@@ -32,6 +34,14 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+                    val context = LocalContext.current
+                    val sharedPreferences = context.getSharedPreferences("DeviceId", MODE_PRIVATE)
+                    val deviceID = sharedPreferences.edit()
+                    deviceID.putInt("DeviceID", 4)
+                    deviceID.apply()
+
+                    val deviceId = sharedPreferences.getInt("DeviceID", 0)
                     MainScreen(viewModel = viewModel, mainActivity = this@MainActivity)
                 }
             }
