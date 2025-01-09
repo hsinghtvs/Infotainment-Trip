@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import com.example.infotainment_trip.components.MainScreen
 import com.example.infotainment_trip.ui.theme.InfotainmentTripTheme
 import com.example.infotainment_trip.viewModel.MainViewModel
@@ -23,6 +26,7 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContent {
             InfotainmentTripTheme {
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -51,7 +55,7 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback {
             val markerOptionsStart: MarkerOptions = MarkerOptions().position(latLongStart)
             mapplsMap?.addMarker(markerOptionsStart)
 
-            val latLongEnd: LatLng = LatLng(viewModel.startLocationLat, viewModel.startLocationLong)
+            val latLongEnd: LatLng = LatLng(viewModel.endLocationLat, viewModel.endLocationLong)
             val markerOptionsEnd: MarkerOptions = MarkerOptions().position(latLongEnd)
             mapplsMap?.addMarker(markerOptionsEnd)
 
