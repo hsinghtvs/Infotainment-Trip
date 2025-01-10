@@ -9,9 +9,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.example.infotainment_trip.components.MainScreen
 import com.example.infotainment_trip.ui.theme.InfotainmentTripTheme
@@ -19,6 +21,7 @@ import com.example.infotainment_trip.viewModel.MainViewModel
 import com.mappls.sdk.maps.MapplsMap
 import com.mappls.sdk.maps.OnMapReadyCallback
 import com.mappls.sdk.maps.annotations.MarkerOptions
+import com.mappls.sdk.maps.annotations.PolylineOptions
 import com.mappls.sdk.maps.camera.CameraPosition
 import com.mappls.sdk.maps.geometry.LatLng
 
@@ -68,6 +71,22 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback {
             val latLongEnd: LatLng = LatLng(viewModel.endLocationLat, viewModel.endLocationLong)
             val markerOptionsEnd: MarkerOptions = MarkerOptions().position(latLongEnd)
             mapplsMap?.addMarker(markerOptionsEnd)
+
+
+
+            val listOfLatLng = mutableStateListOf<LatLng>()
+
+            for (i in 0 until viewModel.tripData.trailData.size) {
+                val lat = viewModel.tripData.trailData[i].split(",").get(0).toDouble()
+                val long = viewModel.tripData.trailData[i].split(",").get(1).toDouble()
+                listOfLatLng.add(LatLng(lat,long))
+            }
+
+            mapplsMap.addPolyline(
+                PolylineOptions()
+                .addAll(listOfLatLng)
+                .color(Color(0xFF3bb2d0).toArgb())
+                .width(2f))
 
             viewModel.changeLocation = true
         }
