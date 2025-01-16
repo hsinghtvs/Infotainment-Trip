@@ -1,10 +1,12 @@
 package com.example.infotainment_trip
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -23,10 +25,13 @@ import com.mappls.sdk.maps.OnMapReadyCallback
 import com.mappls.sdk.maps.annotations.MarkerOptions
 import com.mappls.sdk.maps.annotations.PolylineOptions
 import com.mappls.sdk.maps.camera.CameraPosition
+import com.mappls.sdk.maps.camera.CameraUpdateFactory
 import com.mappls.sdk.maps.geometry.LatLng
+import com.mappls.sdk.maps.geometry.LatLngBounds
 
 class MainActivity : ComponentActivity(), OnMapReadyCallback {
     val viewModel: MainViewModel by viewModels<MainViewModel>()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -82,21 +87,24 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback {
                 listOfLatLng.add(LatLng(lat,long))
             }
 
+            val latLngBounds = LatLngBounds.Builder().includes(listOfLatLng).build()
+            mapplsMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 30))
+
             mapplsMap.addPolyline(
                 PolylineOptions()
                 .addAll(listOfLatLng)
-                .color(Color(0xFF3bb2d0).toArgb())
-                .width(2f))
+                .color(Color.Red.toArgb())
+                .width(3f))
 
             viewModel.changeLocation = true
         }
 
-        val cameraPosition = CameraPosition.Builder().target(
-            LatLng(
-                viewModel.startLocationLat, viewModel.startLocationLong
-            )
-        ).zoom(15.0).tilt(0.0).build()
-        mapplsMap.cameraPosition = cameraPosition
+//        val cameraPosition = CameraPosition.Builder().target(
+//            LatLng(
+//                viewModel.startLocationLat, viewModel.startLocationLong
+//            )
+//        ).zoom(15.0).tilt(0.0).build()
+//        mapplsMap.cameraPosition = cameraPosition
     }
 
     override fun onMapError(mapplsMap: Int, p1: String?) {

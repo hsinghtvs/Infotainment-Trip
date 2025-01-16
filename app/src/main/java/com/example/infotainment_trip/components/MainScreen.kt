@@ -95,56 +95,21 @@ fun MainScreen(
 
     mCalendar.time = Date()
 
+    if (viewModel.dataFirstTime) {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DATE, -1);
+        dataFetch(
+            viewModel,
+            dateFormat.format(cal.time),
+            dateFormat.format(cal.time)
+        )
+    }
 
-    var backgroundGradient = Brush.linearGradient(
-        listOf(
-            Color(0xFF040F36),
-            Color(0xFF030A29)
-        )
-    )
-    var mainBackGroundGradient = Brush.linearGradient(
-        listOf(
-            Color(0xFF040A2F),
-            Color(0xFF060817)
-        )
-    )
-
-    val buttonBackGroundGradient = Brush.verticalGradient(
-        listOf(
-            Color(0xFF2C2C2C).copy(alpha = 0.1f),
-            Color(0xFF2C2C2C).copy(alpha = 0.1f)
-        )
-    )
-    val buttonBackGroundGradientTwo = Brush.verticalGradient(
-        listOf(
-            Color(0xFFECFEEE).copy(alpha = 0.3f),
-            Color(0xFFECFEEE).copy(alpha = 0.3f)
-        )
-    )
-
-    val detailsButtonBackGroundGradient = Brush.verticalGradient(
-        listOf(
-            Color(0xFF255AF5).copy(alpha = 1f),
-            Color(0xFF255AF5).copy(alpha = 1f),
-            Color(0xFF255AF5).copy(alpha = 1f),
-            Color(0xFF090F26).copy(alpha = 1f)
-        )
-    )
-
-    var buttonStroke = Brush.linearGradient(
-        listOf(
-            Color(0xFFFFFFFF).copy(alpha = 1f),
-            Color(0xFFFFFFFF).copy(alpha = 0f),
-            Color(0xFFFFFFFF).copy(alpha = 0f),
-            Color(0xFFFFFFFF).copy(alpha = 1f)
-        )
-    )
-
-    Box(modifier = Modifier.background(brush = mainBackGroundGradient)) {
+    Box(modifier = Modifier.background(brush = viewModel.mainBackGroundGradient)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush = backgroundGradient)
+                .background(brush = viewModel.backgroundGradient)
         ) {
             Row(
                 modifier = Modifier
@@ -153,13 +118,25 @@ fun MainScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "Trip Details",
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.manrope_extrabold)),
-                        color = Color.White,
+
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier.size(35.dp),
+                        painter = painterResource(id = R.drawable.trip),
+                        contentDescription = ""
                     )
-                )
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Text(
+                        text = "Trip Details",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.manrope_extrabold)),
+                            color = Color.White,
+                        )
+                    )
+                }
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -170,6 +147,7 @@ fun MainScreen(
                         modifier = Modifier
                             .clickable {
                                 viewModel.datesNotEmpty = false
+                                viewModel.tripIndexSelected = 0
                                 dataFetch(
                                     viewModel,
                                     dateFormat.format(startOfLastWeek),
@@ -178,10 +156,14 @@ fun MainScreen(
                             }
                             .padding(10.dp)
                             .background(
-                                brush = detailsButtonBackGroundGradient,
+                                brush = viewModel.detailsButtonBackGroundGradient,
                                 shape = RoundedCornerShape(30.dp)
                             )
-                            .border(1.dp, brush = buttonStroke, shape = RoundedCornerShape(20.dp))
+                            .border(
+                                1.dp,
+                                brush = viewModel.buttonStroke,
+                                shape = RoundedCornerShape(20.dp)
+                            )
                             .padding(vertical = 5.dp)
                             .width(100.dp),
                         style = TextStyle(
@@ -196,7 +178,7 @@ fun MainScreen(
                         modifier = Modifier
                             .clickable {
                                 viewModel.datesNotEmpty = false
-
+                                viewModel.tripIndexSelected = 0
                                 dataFetch(
                                     viewModel,
                                     "${lastMonth.format(monthYearFormatter)}-01",
@@ -205,10 +187,14 @@ fun MainScreen(
                             }
                             .padding(10.dp)
                             .background(
-                                brush = detailsButtonBackGroundGradient,
+                                brush = viewModel.detailsButtonBackGroundGradient,
                                 shape = RoundedCornerShape(30.dp)
                             )
-                            .border(1.dp, brush = buttonStroke, shape = RoundedCornerShape(20.dp))
+                            .border(
+                                1.dp,
+                                brush = viewModel.buttonStroke,
+                                shape = RoundedCornerShape(20.dp)
+                            )
                             .padding(vertical = 5.dp)
                             .width(100.dp),
                         style = TextStyle(
@@ -223,6 +209,7 @@ fun MainScreen(
                         modifier = Modifier
                             .clickable {
                                 viewModel.datesNotEmpty = false
+                                viewModel.tripIndexSelected = 0
                                 val cal = Calendar.getInstance()
                                 cal.add(Calendar.DATE, -1);
                                 dataFetch(
@@ -233,10 +220,14 @@ fun MainScreen(
                             }
                             .padding(10.dp)
                             .background(
-                                brush = detailsButtonBackGroundGradient,
+                                brush = viewModel.detailsButtonBackGroundGradient,
                                 shape = RoundedCornerShape(30.dp)
                             )
-                            .border(1.dp, brush = buttonStroke, shape = RoundedCornerShape(20.dp))
+                            .border(
+                                1.dp,
+                                brush = viewModel.buttonStroke,
+                                shape = RoundedCornerShape(20.dp)
+                            )
                             .padding(vertical = 5.dp)
                             .width(100.dp),
                         style = TextStyle(
@@ -255,39 +246,25 @@ fun MainScreen(
                 )
             )
 
-            if (viewModel.datesNotEmpty) {
+            if (viewModel.dataLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = "Select Date to View Details",
-                        style = TextStyle(
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            fontFamily = FontFamily(Font(R.font.manrope_semibold)),
-                        )
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             } else {
-                if (viewModel.dataLoading) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
+                if (viewModel.tripSummary.isEmpty()) {
+                    Text(
+                        modifier = Modifier.fillMaxSize(),
+                        text = viewModel.dataError,
+                        style = TextStyle(
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            fontFamily = FontFamily(Font(R.font.manrope_extrabold)),
                         )
-                    }
+                    )
                 } else {
-                    if (viewModel.tripSummary.isEmpty()) {
-                        Text(
-                            modifier = Modifier.fillMaxSize(),
-                            text = viewModel.dataError,
-                            style = TextStyle(
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily(Font(R.font.manrope_extrabold)),
-                            )
-                        )
-                    } else {
-                        TripList(viewModel, mainActivity)
-                    }
+                    TripList(viewModel, mainActivity)
                 }
             }
         }
@@ -297,14 +274,8 @@ fun MainScreen(
 @Composable
 private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
 
-    val tripBackGroundGradient = Brush.verticalGradient(
-        listOf(
-            Color(0xFF000000).copy(alpha = 0f),
-            Color(0xFF76ADFF).copy(alpha = 0.2f)
-        )
-    )
     Row {
-        Row(modifier = Modifier.weight(1f)) {
+        Row(modifier = Modifier.weight(1.2f)) {
             Box(
                 modifier = Modifier
                     .padding(10.dp)
@@ -328,18 +299,27 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                     painter = painterResource(id = R.drawable.trip_dot),
                                     contentDescription = ""
                                 )
-                                trip.StartDate?.let { it1 ->
-                                    Text(
-                                        modifier = Modifier.padding(start = 10.dp),
-                                        text = it1.split(" ").take(2).toString().replace("]", "")
-                                            .replace("[", "").replace(",", ""),
-                                        style = TextStyle(
-                                            fontSize = 10.sp,
-                                            color = Color.White,
-                                            textAlign = TextAlign.Center,
-                                            fontFamily = FontFamily(Font(R.font.manrope_bold)),
+                                trip.EndDate?.let { endDate ->
+                                    trip.StartDate?.let { it1 ->
+                                        Text(
+                                            modifier = Modifier.padding(start = 10.dp),
+                                            text = "${
+                                                it1.split(" ").take(2).toString().replace("]", "")
+                                                    .replace("[", "").replace(",", "")
+                                            } -  ${
+                                                it1.split(" ").takeLast(2).toString()
+                                                    .replace("]", "")
+                                                    .replace("[", "").replace(",", "")
+                                            } to ${endDate.split(" ").takeLast(2).toString().replace("]", "")
+                                                .replace("[", "").replace(",", "")}",
+                                            style = TextStyle(
+                                                fontSize = 10.sp,
+                                                color = Color.White,
+                                                textAlign = TextAlign.Center,
+                                                fontFamily = FontFamily(Font(R.font.manrope_bold)),
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                             Spacer(modifier = Modifier.size(10.dp))
@@ -386,41 +366,26 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                     }
                                     .padding(start = 20.dp)
                                     .background(
-                                        brush = tripBackGroundGradient,
+                                        brush = viewModel.tripBackGroundGradient,
                                         shape = RoundedCornerShape(10.dp)
                                     )
                                     .border(
-                                        1.dp,
+                                        0.75.dp,
                                         color = if (viewModel.tripIndexSelected == index) Color(
                                             0xFF1AADFE
-                                        ) else Color.Transparent,
+                                        ).copy(alpha = 0.5f) else Color.Transparent,
                                         shape = RoundedCornerShape(10.dp)
                                     )
                             ) {
                                 Column {
                                     Row(
+                                        modifier = Modifier.padding(
+                                            top = 15.dp,
+                                            bottom = 15.dp,
+                                            start = 10.dp
+                                        ),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
-                                            modifier = Modifier
-                                                .weight(0.7f)
-                                                .padding(
-                                                    top = 15.dp,
-                                                    bottom = 15.dp,
-                                                    start = 10.dp
-                                                )
-                                                .background(color = Color(0xFF000106))
-                                                .padding(vertical = 5.dp, horizontal = 10.dp),
-                                            text = "Trip ${index + 1}",
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            style = TextStyle(
-                                                fontSize = 8.sp,
-                                                fontFamily = FontFamily(Font(R.font.manrope_bold)),
-                                                color = Color(0xFF89F38D)
-                                            )
-                                        )
-                                        Spacer(modifier = Modifier.weight(0.1f))
                                         Row(
                                             modifier = Modifier.weight(1f),
                                             verticalAlignment = Alignment.CenterVertically,
@@ -428,10 +393,10 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                         ) {
                                             Image(
                                                 modifier = Modifier
-                                                    .padding(top = 15.dp)
+                                                    .padding(start = 5.dp, end = 5.dp)
                                                     .align(Alignment.CenterVertically)
-                                                    .size(30.dp),
-                                                painter = painterResource(id = R.drawable.millege),
+                                                    .size(20.dp),
+                                                painter = painterResource(id = R.drawable.trip_mileage),
                                                 contentDescription = ""
                                             )
                                             Text(
@@ -441,24 +406,23 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
                                                 style = TextStyle(
-                                                    fontSize = 8.sp,
+                                                    fontSize = 10.sp,
                                                     fontFamily = FontFamily(Font(R.font.manrope_bold)),
                                                     color = Color.White
                                                 )
                                             )
 
                                         }
-                                        Spacer(modifier = Modifier.weight(0.2f))
                                         Row(
                                             modifier = Modifier.weight(1f),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Image(
                                                 modifier = Modifier
-                                                    .padding(top = 15.dp)
+                                                    .padding(horizontal = 5.dp)
                                                     .align(Alignment.CenterVertically)
-                                                    .size(30.dp),
-                                                painter = painterResource(id = R.drawable.distance),
+                                                    .size(20.dp),
+                                                painter = painterResource(id = R.drawable.trip_distance),
                                                 contentDescription = ""
                                             )
                                             Text(
@@ -468,7 +432,7 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
                                                 style = TextStyle(
-                                                    fontSize = 8.sp,
+                                                    fontSize = 10.sp,
                                                     fontFamily = FontFamily(Font(R.font.manrope_bold)),
                                                     color = Color.White
                                                 )
@@ -484,7 +448,7 @@ private fun TripList(viewModel: MainViewModel, mainActivity: MainActivity) {
                 }
             }
         }
-        TripSummary(modifier = Modifier.weight(2f), viewModel = viewModel, mainActivity)
+        TripSummary(modifier = Modifier.weight(3f), viewModel = viewModel, mainActivity)
     }
 }
 
@@ -517,18 +481,16 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                             )
                         }
                         Spacer(modifier = Modifier.size(5.dp))
-//                        viewModel.tripData.startAddress?.let { it1 ->
-                            Text(
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis,
-                                text = "J4XC+GFC, Thirumagal ByPass, Konerikarai, Kandhampatty, Tamil Nadu 636005, India",
-                                style = TextStyle(
-                                    fontSize = 10.sp,
-                                    fontFamily = FontFamily(Font(R.font.manrope_regular)),
-                                    color = Color.White
-                                )
+                        Text(
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            text = viewModel.startAddress,
+                            style = TextStyle(
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily(Font(R.font.manrope_regular)),
+                                color = Color.White
                             )
-//                        }
+                        )
                     }
                     Spacer(modifier = Modifier.size(10.dp))
                     Image(
@@ -552,24 +514,23 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                             )
                         }
                         Spacer(modifier = Modifier.size(5.dp))
-//                        viewModel.tripData.endAddress?.let { it1 ->
-                            Text(
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis,
-                                text = "J4XC+GFC, Thirumagal ByPass, Konerikarai, Kandhampatty, Tamil Nadu 636005, India\n",
-                                style = TextStyle(
-                                    fontSize = 10.sp,
-                                    fontFamily = FontFamily(Font(R.font.manrope_regular)),
-                                    color = Color.White
-                                )
+                        Text(
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            text = viewModel.endAddress,
+                            style = TextStyle(
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily(Font(R.font.manrope_regular)),
+                                color = Color.White
                             )
-//                        }
+                        )
                     }
                 }
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier
                         .padding(16.dp),
-                    columns = StaggeredGridCells.Fixed(3)
+                    columns = StaggeredGridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     item {
                         TripDataDetails(
@@ -580,7 +541,7 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                     }
                     item {
                         TripDataDetails(
-                            image = R.drawable.trip_mileage,
+                            image = R.drawable.trip_fuel,
                             name = "Trip Mileage",
                             value = "${viewModel.tripData.mileageMaf} kmpl"
                         )
@@ -594,7 +555,7 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                     }
                     item {
                         TripDataDetails(
-                            image = R.drawable.average_speed,
+                            image = R.drawable.speeding,
                             name = "Max Speed",
                             value = "${viewModel.tripData.maxSpeed} km/h"
                         )
@@ -602,7 +563,7 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                     item {
                         TripDataDetails(
                             image = R.drawable.fuel_consumption,
-                            name = "Fuel Consumption",
+                            name = "Fuel Consumed",
                             value = "${viewModel.tripData.fuelConsumedMaf} Lts"
                         )
                     }
@@ -611,6 +572,13 @@ private fun TripSummary(modifier: Modifier, viewModel: MainViewModel, mainActivi
                             image = R.drawable.hard_accelaration,
                             name = "Driver Score",
                             value = "${viewModel.tripData.driverScore}"
+                        )
+                    }
+                    item {
+                        TripDataDetails(
+                            image = R.drawable.total_time,
+                            name = "Total Travel",
+                            value = "${viewModel.tripData.tripDuration} mins"
                         )
                     }
                 }
@@ -633,18 +601,19 @@ private fun TripDataDetails(image: Int, name: String, value: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(30.dp),
             painter = painterResource(id = image),
             contentDescription = ""
         )
         Spacer(modifier = Modifier.size(5.dp))
         Text(
-            maxLines = 1,
+            maxLines = 3,
             overflow = TextOverflow.Ellipsis,
             text = name,
             style = TextStyle(
                 fontSize = 10.sp,
-                fontFamily = FontFamily(Font(R.font.manrope_bold)),
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily(Font(R.font.manrope_extrabold)),
                 color = Color.White
             )
         )
@@ -666,7 +635,6 @@ private fun dataFetch(viewModel: MainViewModel, fromDate: String, toDate: String
     viewModel.dataLoading = true
     val okHttpClient = OkHttpClient()
     val request = Request.Builder()
-//        .url("https://cvdrivenostics.mytvs.in/movement/tripSummaryReportNew?orgId=109991&vehicleId=26272&dateFrom=${fromDate}%2000:00:00&dateTo=${toDate}%2023:59:59")
         .url(" https://cvdrivenostics.mytvs.in/movement/tripSummaryReportMap?&orgId=109991&vehicleId=26224&startDate=${fromDate}%2000:00:00&endDate=${toDate}%2023:59:59&driverID=0&driverSearch=0&customerID=109990&regionId=0&length=10&dealerId=0")
 
         .build()
@@ -691,21 +659,24 @@ private fun dataFetch(viewModel: MainViewModel, fromDate: String, toDate: String
                     )
                 }
             }
-            for (i in 0 until viewModel.tripSummary.size) {
-                viewModel.tripSummary?.get(i)?.StartLocation?.let {
-                    viewModel.tripSummary.get(i).EndLocation?.let { it1 ->
-                        getStartlocationAddress(
-                            it,
-                            it1,
-                            i,
-                            viewModel
-                        )
-                    }
-                }
-                if (i == viewModel.tripSummary.size - 1) {
-                }
-                viewModel.dataLoading = false
-            }
+            viewModel.dataFirstTime = false
+//            for (i in 0 until viewModel.tripSummary.size) {
+//                viewModel.tripSummary?.get(i)?.StartLocation?.let {
+//                    viewModel.tripSummary.get(i).EndLocation?.let { it1 ->
+//                        getStartlocationAddress(
+//                            it,
+//                            it1,
+//                            i,
+//                            viewModel
+//                        )
+//                    }
+//                }
+//                if (i == viewModel.tripSummary.size - 1) {
+//                }
+//                viewModel.dataLoading = false
+//            }
+            viewModel.dataLoading = false
+
             viewModel.startLocationLat =
                 viewModel.tripData.StartLocation?.split(",")?.get(0)?.toDouble()!!
             viewModel.startLocationLong =
@@ -728,7 +699,7 @@ private fun getStartlocationAddress(
     var startLocationLong = startLocation.split(",")[1].toDouble()
     val okHttpClient = OkHttpClient()
     val request = Request.Builder()
-        .url("https://apis.mappls.com/advancedmaps/v1/4a0bbbe5ab800eca852f98bc67c7313b/rev_geocode?lat=${startLocationLat}&lng=${startLocationLong}")
+        .url("https://apis.mappls.com/advancedmaps/v1/2d41f81e76cc1d89d9b6b4b844077d99/rev_geocode?lat=${startLocationLat}&lng=${startLocationLong}")
         .build()
 
     okHttpClient.newCall(request).enqueue(object : Callback {
@@ -742,8 +713,9 @@ private fun getStartlocationAddress(
             if (response.code == 200) {
                 val addressResponse = gson.fromJson(responseBody, AddressModel::class.java)
                 if (addressResponse.results[0].formatted_address != null) {
-                    viewModel.tripSummary[index].startAddress =
-                        addressResponse.results[0].formatted_address
+//                    viewModel.tripSummary[index].startAddress =
+//                        addressResponse.results[0].formatted_address
+                    viewModel.startAddress = addressResponse.results[0].formatted_address
                     getEndLocationAddress(startLocation, endLocation, index, viewModel)
                 } else {
                     viewModel.tripSummary[index].startAddress = "No Address"
@@ -765,7 +737,7 @@ private fun getEndLocationAddress(
     var endLocationLong = endLocation.split(",")[1].toDouble()
     val okHttpClient = OkHttpClient()
     val request = Request.Builder()
-        .url("https://apis.mappls.com/advancedmaps/v1/4a0bbbe5ab800eca852f98bc67c7313b/rev_geocode?lat=${endLocationLat}&lng=${endLocationLong}")
+        .url("https://apis.mappls.com/advancedmaps/v1/2d41f81e76cc1d89d9b6b4b844077d99/rev_geocode?lat=${endLocationLat}&lng=${endLocationLong}")
         .build()
 
     okHttpClient.newCall(request).enqueue(object : Callback {
@@ -779,8 +751,9 @@ private fun getEndLocationAddress(
             if (response.code == 200) {
                 val addressResponse = gson.fromJson(responseBody, AddressModel::class.java)
                 if (addressResponse.results[0].formatted_address != null) {
-                    viewModel.tripSummary[index].endAddress =
-                        addressResponse.results[0].formatted_address
+//                    viewModel.tripSummary[index].endAddress =
+//                        addressResponse.results[0].formatted_address
+                    viewModel.endAddress = addressResponse.results[0].formatted_address
                 } else {
                     viewModel.tripSummary[index].endAddress = "No Address"
                 }
